@@ -48,3 +48,44 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+---
+
+## 🔴 Hackathon Project Override: Urban SOS Beacon
+
+PURPOSE:
+Demonstrate real nearby device pinging using two physical phones.
+
+ROLES:
+1. Victim device: triggers emergency
+2. Responder device: receives ping and acknowledges
+
+TECH STACK:
+- Expo (React Native)
+- Firebase Firestore
+- Expo Push Notifications
+
+CORE FLOW (Victim):
+1. Press EMERGENCY
+2. Select emergency type
+3. Fetch live GPS
+4. Create emergency record in Firestore
+5. Send push notification to responders
+6. Show real-time responder acknowledgements
+
+CORE FLOW (Responder):
+1. App receives push notification
+2. Opens emergency details
+3. Shows distance to victim
+4. User taps ACKNOWLEDGE
+5. Firestore updates in real time
+
+CONSTRAINTS:
+- Anonymous users only
+- No authentication
+- Two-device demo is acceptable
+- Focus on reliability over features
+
+PRIORITY:
+This section OVERRIDES any previous instructions in this README.
+

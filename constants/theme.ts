@@ -27,6 +27,17 @@ export const Colors = {
   },
 };
 
+export const BeaconColors = {
+  emergency: '#C41E3A',
+  emergencyPressed: '#9B1830',
+  acknowledge: '#0A7EA4',
+  acknowledgePressed: '#086A8C',
+  surface: '#F5F5F5',
+  surfaceDark: '#1E1E1E',
+  border: '#E0E0E0',
+  borderDark: '#333',
+};
+
 export const Fonts = Platform.select({
   ios: {
     /** iOS `UIFontDescriptorSystemDesignDefault` */
