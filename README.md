@@ -1,91 +1,118 @@
-# Welcome to your Expo app 👋
+# 🚨 Urban SOS Beacon
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A real-time mobile emergency alert system that connects people in distress with nearby responders using live location, push notifications, and cloud sync.
 
-## Get started
-
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Built as a hackathon MVP to demonstrate how **response time before official help arrives** can be reduced through community-powered proximity alerts.
 
 ---
 
-## 🔴 Hackathon Project Override: Urban SOS Beacon
+## 🧠 Problem
 
-PURPOSE:
-Demonstrate real nearby device pinging using two physical phones.
+In urban emergencies, the biggest gap is not *availability* of help — it’s **time**.
 
-ROLES:
-1. Victim device: triggers emergency
-2. Responder device: receives ping and acknowledges
+Even in cities:
+- Emergency services take several minutes to arrive
+- Nearby people who could help are unaware
+- Victims often don’t have time to explain or call multiple contacts
 
-TECH STACK:
-- Expo (React Native)
-- Firebase Firestore
-- Expo Push Notifications
+Those first few minutes matter.
 
-CORE FLOW (Victim):
-1. Press EMERGENCY
-2. Select emergency type
-3. Fetch live GPS
-4. Create emergency record in Firestore
-5. Send push notification to responders
-6. Show real-time responder acknowledgements
+---
 
-CORE FLOW (Responder):
-1. App receives push notification
-2. Opens emergency details
-3. Shows distance to victim
-4. User taps ACKNOWLEDGE
-5. Firestore updates in real time
+## 💡 Solution
 
-CONSTRAINTS:
-- Anonymous users only
-- No authentication
-- Two-device demo is acceptable
-- Focus on reliability over features
+**Urban SOS Beacon** is a one-tap emergency system:
 
-PRIORITY:
-This section OVERRIDES any previous instructions in this README.
+- A user triggers an emergency with a single tap
+- Their **live location** and **emergency type** are captured
+- Nearby responders receive a **real push notification**
+- A responder can **acknowledge** and assist immediately
+- The victim sees real-time acknowledgement status
+
+The demo uses two physical phones to show the full end-to-end flow.
+
+---
+
+## ✨ Key Features
+
+- 📍 Live GPS location capture
+- 🔔 Real push notifications (Expo)
+- ☁️ Real-time cloud sync (Firebase Firestore)
+- 🔄 Victim ↔ Responder acknowledgement loop
+- 📏 Distance calculation between devices
+- 🧪 Anonymous, auth-free demo setup
+- 📱 Built and tested on real mobile devices
+
+---
+
+## 🛠️ Tech Stack
+
+- **Expo (React Native)**
+- **Firebase Firestore**
+- **Expo Push Notifications**
+- **Expo Location**
+- **TypeScript**
+- **Git & GitHub**
+
+---
+
+## 🧪 Demo Flow (Two Devices)
+
+1. **Phone A (Victim)**
+   - Selects emergency type
+   - Presses EMERGENCY
+   - Location + alert sent
+
+2. **Phone B (Responder)**
+   - Receives push notification
+   - Views emergency details and distance
+   - Acknowledges the emergency
+
+3. **Phone A**
+   - Sees live acknowledgement update
+
+This controlled setup demonstrates how the system would scale to multiple responders in production.
+
+---
+
+## 🧩 What I Learned / Skills Gained
+
+Through building this project, I gained hands-on experience with:
+
+- Designing **panic-friendly mobile UX**
+- Building **real-time systems** using Firestore
+- Implementing **push notifications** in Expo
+- Managing **environment variables securely**
+- Debugging **Expo + native plugin issues**
+- Structuring an MVP under **hackathon constraints**
+- Using AI tools (Cursor) effectively for accelerated development
+- End-to-end project workflow: build → debug → deploy → version control
+
+Most importantly, I learned how to **turn a concept into a working, demo-ready product**.
+
+---
+
+## ⚠️ Notes
+
+- Firebase configuration is provided via environment variables (`.env`) and is **not committed**.
+- This is an MVP / demo project, not a production deployment.
+- Nearby responder discovery is demonstrated using a controlled two-device setup.
+
+---
+
+## 📌 Future Improvements
+
+- Responder opt-in onboarding
+- Radius-based filtering at scale
+- Authority escalation logic
+- Offline / low-network fallback
+- Native Bluetooth / Wi-Fi proximity discovery
+
+---
+
+## 🙌 Acknowledgements
+
+Built during a hackathon to explore smart-city safety and rapid emergency response systems.
+
+---
 
