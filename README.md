@@ -42,6 +42,10 @@ The demo uses two physical phones to show the full end-to-end flow.
 - 📏 Distance calculation between devices
 - 🧪 Anonymous, auth-free demo setup
 - 📱 Built and tested on real mobile devices
+- Instant emergency confirmation popup (“Emergency alert sent”)
+- Victim reassurance when a responder acknowledges (“Help is on the way”)
+- Responder navigation to victim location via Maps (demo uses mocked coordinates)
+
 
 ---
 
@@ -61,15 +65,17 @@ The demo uses two physical phones to show the full end-to-end flow.
 1. **Phone A (Victim)**
    - Selects emergency type
    - Presses EMERGENCY
+   - App immediately confirms alert with a visual popup
    - Location + alert sent
 
 2. **Phone B (Responder)**
    - Receives push notification
    - Views emergency details and distance
+   - Redirects to Maps to Victim's location
    - Acknowledges the emergency
 
 3. **Phone A**
-   - Sees live acknowledgement update
+   - Victim sees “Help is on the way” confirmation
 
 This controlled setup demonstrates how the system would scale to multiple responders in production.
 
