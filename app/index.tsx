@@ -3,6 +3,8 @@ import * as Location from 'expo-location';
 import { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  Linking,
+  Modal,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -36,12 +38,18 @@ const EMERGENCY_TYPES = [
   'Other',
 ];
 
+// Mocked victim coordinates for Maps redirect (hackathon demo)
+const MOCK_VICTIM_LAT = 37.7749;
+const MOCK_VICTIM_LNG = -122.4194;
+
 export default function BeaconScreen() {
   const [mode, setMode] = useState<Mode>('victim');
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [emergencySent, setEmergencySent] = useState(false);
   const [emergencyId, setEmergencyId] = useState<string | null>(null);
   const [acknowledged, setAcknowledged] = useState(false);
+  const [showEmergencySentModal, setShowEmergencySentModal] = useState(false);
+  const [showHelpOnTheWayModal, setShowHelpOnTheWayModal] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -69,7 +77,7 @@ export default function BeaconScreen() {
       token = t;
       if (t) return registerResponderToken(t);
     });
-    return () => {};
+    return () => { };
   }, [mode]);
 
   useEffect(() => {
@@ -89,16 +97,35 @@ export default function BeaconScreen() {
   useEffect(() => {
     if (mode !== 'victim' || !emergencyId) return;
     const unsub = subscribeToEmergency(emergencyId, (data) => {
-      if (data?.status === 'acknowledged') setAcknowledged(true);
+      if (data?.status === 'acknowledged') {
+        setAcknowledged(true);
+        setShowHelpOnTheWayModal(true);
+      }
     });
     return () => unsub();
   }, [mode, emergencyId]);
 
+  // Auto-dismiss "Emergency Alert Sent" after 5s
+  useEffect(() => {
+    if (!showEmergencySentModal) return;
+    const t = setTimeout(() => setShowEmergencySentModal(false), 5000);
+    return () => clearTimeout(t);
+  }, [showEmergencySentModal]);
+
+  // Auto-dismiss "Help Is On The Way" after 5–7s
+  useEffect(() => {
+    if (!showHelpOnTheWayModal) return;
+    const t = setTimeout(() => setShowHelpOnTheWayModal(false), 6000);
+    return () => clearTimeout(t);
+  }, [showHelpOnTheWayModal]);
+
+  // --- Call triggerEmergency here: when victim taps EMERGENCY (shows "Emergency alert sent" popup) ---
   const handleEmergency = async () => {
     if (!selectedType) return;
     setError(null);
     setSending(true);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+    setShowEmergencySentModal(true);
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
@@ -120,6 +147,7 @@ export default function BeaconScreen() {
     }
   };
 
+  // --- Call acknowledgeEmergency here: when responder taps Acknowledge (victim sees "Help is on the way" + opens Maps) ---
   const handleAcknowledge = async () => {
     if (!responderEmergency) return;
     setAcknowledging(true);
@@ -128,6 +156,8 @@ export default function BeaconScreen() {
       await acknowledgeEmergency(responderEmergency.id);
       responderAckedId.current = responderEmergency.id;
       setAcknowledged(true);
+      const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${MOCK_VICTIM_LAT},${MOCK_VICTIM_LNG}`;
+      Linking.openURL(mapsUrl);
     } finally {
       setAcknowledging(false);
     }
@@ -139,11 +169,11 @@ export default function BeaconScreen() {
   const distanceKm =
     responderEmergency && responderLocation
       ? haversineKm(
-          responderEmergency.lat,
-          responderEmergency.lng,
-          responderLocation.lat,
-          responderLocation.lng
-        )
+        responderEmergency.lat,
+        responderEmergency.lng,
+        responderLocation.lat,
+        responderLocation.lng
+      )
       : null;
 
   return (
@@ -293,6 +323,40 @@ export default function BeaconScreen() {
           </View>
         )}
       </ScrollView>
+
+      {/* FEATURE 1: Emergency Alert Sent popup — shown when triggerEmergency (handleEmergency) runs */}
+      <Modal
+        visible={showEmergencySentModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowEmergencySentModal(false)}
+      >
+        <Pressable style={styles.modalOverlay} onPress={() => setShowEmergencySentModal(false)}>
+          <View style={[styles.popupCard, { backgroundColor: cardBg }]}>
+            <Text style={[styles.popupTitle, { color: text }]}>Emergency alert sent</Text>
+            <Text style={[styles.popupBody, { color: text }]}>
+              Nearby responders have been notified.
+            </Text>
+          </View>
+        </Pressable>
+      </Modal>
+
+      {/* FEATURE 2: Help Is On The Way popup — shown on victim when responder calls acknowledgeEmergency */}
+      <Modal
+        visible={showHelpOnTheWayModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowHelpOnTheWayModal(false)}
+      >
+        <Pressable style={styles.modalOverlay} onPress={() => setShowHelpOnTheWayModal(false)}>
+          <View style={[styles.popupCard, { backgroundColor: cardBg }]}>
+            <Text style={[styles.popupTitle, { color: text }]}>Help is on the way</Text>
+            <Text style={[styles.popupBody, { color: text }]}>
+              A responder has acknowledged your alert.
+            </Text>
+          </View>
+        </Pressable>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -414,5 +478,29 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: '600',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  popupCard: {
+    borderRadius: 16,
+    padding: 24,
+    maxWidth: 320,
+    alignItems: 'center',
+  },
+  popupTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  popupBody: {
+    fontSize: 15,
+    textAlign: 'center',
+    opacity: 0.9,
   },
 });
